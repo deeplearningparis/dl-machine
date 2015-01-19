@@ -58,10 +58,10 @@ sudo apt-get install -y libfreetype6-dev libpng12-dev
 pip install matplotlib ipython[all] pandas
 
 # Scikit-learn (generic machine learning utilities)
-pip install -e git+git://github.com/scikit-learn/scikit-learn.git
+pip install -e git+git://github.com/scikit-learn/scikit-learn.git#egg=scikit-learn
 
 # Theano
-pip install-e git+git://github.com/Theano/Theano.git
+pip install -e git+git://github.com/Theano/Theano.git#egg=Theano
 
 # Torch
 curl -sk https://raw.githubusercontent.com/torch/ezinstall/master/install-deps | bash
