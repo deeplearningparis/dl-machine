@@ -19,7 +19,7 @@ sudo chown ubuntu:ubuntu /opt/
 git clone -q --branch=master git://github.com/xianyi/OpenBLAS.git
 export OPENBLAS_ROOT=/opt/OpenBLAS-no-openmp
 (cd OpenBLAS \
-  && make USE_OPENMP=0 NO_AFFINITY=1 NUM_THREADS=32 \
+  && make FC=gfortran USE_OPENMP=0 NO_AFFINITY=1 NUM_THREADS=32 \
   && make install PREFIX=$OPENBLAS_ROOT)
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$OPENBLAS_ROOT/lib
 echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH" >> ~/.bashrc
