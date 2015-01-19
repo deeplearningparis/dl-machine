@@ -1,0 +1,9 @@
+[global]
+device=gpu
+floatX=float32
+allow_gc=False
+optimizer_including="local_ultra_fast_sigmoid"
+
+[nvcc]
+use_fast_math=True
+fastmath=True
