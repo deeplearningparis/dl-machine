@@ -9,7 +9,7 @@ Scripts to setup a GPU / CUDA enable compute server with libraries to study deep
 - select community AMIs and search for `ubuntu-14.04-hvm-deeplearning-paris`
 - on the Choose instance Type tab, select GPU instances `g2.2xlarge`
 - bid a price larger than current price (e.g. 0.10$)
-- in configure security group click Add Rule, and add a Custom TCP Rule with port Range `8888-8889` and from Anywhere
+- in configure security group click Add Rule, and add a Custom TCP Rule with port Range `8888-8889` and from Anywhere (TODO: add access restriction)
 - save the `mykey.pem` file and change its accessibility :
 ```
 chmod 400 mykeypem
@@ -65,3 +65,5 @@ iTorch notebook --ip='*' --browser=none
 ```
 
 - access your iPython/iTorch by connecting to the address `http://dnsyourinstance:8888/`
+
+TODO : add security! Anyone can access the iPython/iTorch console
