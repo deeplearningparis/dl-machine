@@ -90,7 +90,8 @@ if [ ! -d "torch" ]; then
     curl -sk https://raw.githubusercontent.com/torch/ezinstall/master/install-luajit+torch | PREFIX=~/torch bash
     echo "export PATH=\$PATH:$HOME/torch/bin" >> ~/.bashrc
     echo "export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:$HOME/torch/lib" >> ~/.bashrc
-    source ~/.bashrc
+    export PATH=$PATH:$HOME/torch/bin
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/torch/lib
     git clone https://github.com/facebook/iTorch.git
     (cd iTorch && luarocks make)
 fi
