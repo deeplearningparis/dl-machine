@@ -81,8 +81,12 @@ git clone https://github.com/deeplearningparis/dl-machine.git
 ln -s dl-machine/theanorc .theanorc
 
 # Torch
-#curl -sk https://raw.githubusercontent.com/torch/ezinstall/master/install-deps | bash
-#curl -sk https://raw.githubusercontent.com/torch/ezinstall/master/install-luajit+torch | PREFIX=~/torch bash
-#echo "export PATH=~/torch/bin:\$PATH; export LD_LIBRARY_PATH=~/torch/lib:\$LD_LIBRARY_PATH; " >>~/.bashrc && source ~/.bashrc
-#git clone https://github.com/facebook/iTorch.git
-#(cd iTorch && luarocks make)
+if [ ! -d "torch" ]; then
+    curl -sk https://raw.githubusercontent.com/torch/ezinstall/master/install-deps | bash
+    curl -sk https://raw.githubusercontent.com/torch/ezinstall/master/install-luajit+torch | PREFIX=~/torch bash
+    echo "export PATH=\$PATH:$HOME/torch/bin" >> ~/.bashrc
+    echo "export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:$HOME/torch/lib" >> ~/.bashrc
+    source ~/.bashrc
+    git clone https://github.com/facebook/iTorch.git
+    (cd iTorch && luarocks make)
+fi
