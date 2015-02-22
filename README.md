@@ -7,6 +7,7 @@ Scripts to setup a GPU / CUDA enable compute server with libraries to study deep
 - log in to AWS management console and select EC2 instances
 - select US-WEST (N. California) region in top left menu
 - select community AMIs and search for `ubuntu-14.04-hvm-deeplearning-paris`
+- click on "Spot Request" on the leftmost menu
 - on the Choose instance Type tab, select GPU instances `g2.2xlarge`
 - bid a price larger than current price (e.g. 0.10$)
 - in configure security group click Add Rule, and add a Custom TCP Rule with port Range `8888-8889` and from Anywhere (TODO: add access restriction)
@@ -49,21 +50,21 @@ vi ~/.ssh/config
 
 you can access your instance in two ways:
 - ssh to your instance, and start coding in Python or Torch
-- run an iPython/iTorch server from your instance and use it locally
+- run an ipython/itorch server from your instance and use it locally
 
-## Run the iPython/iTorch notebook server
+## Run the ipython/itorch notebook server
 
 - ssh to your instance
 - start a screen or tmux terminal:
 ```
 screen
 ```
-- launch the iPython and iTorch notebook server
+- launch the ipython and itorch notebook server
 ```
 ipython notebook --ip='*' --browser=none
-iTorch notebook --ip='*' --browser=none
+itorch notebook --ip='*' --browser=none
 ```
 
-- access your iPython/iTorch by connecting to the address `http://dnsyourinstance:8888/`
+- access your ipython/itorch by connecting to the address `http://dnsyourinstance:8888/`
 
-TODO : add security! Anyone can access the iPython/iTorch console
+TODO : add security! Anyone can access the ipython/itorch console
