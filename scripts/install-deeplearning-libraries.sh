@@ -39,7 +39,7 @@ if [ ! -d "venv" ]; then
     echo "source ~/venv/bin/activate" >> ~/.bashrc
 fi
 source venv/bin/activate
-pip install Cython
+pip install -U Cython
 
 # Build numpy from source against OpenBLAS
 if [ ! -d "numpy" ]; then
@@ -66,7 +66,7 @@ fi
 
 # Install common tools from the scipy stack
 sudo apt-get install -y libfreetype6-dev libpng12-dev
-pip install matplotlib ipython[all] pandas
+pip install -U matplotlib ipython[all] pandas
 
 # Scikit-learn (generic machine learning utilities)
 pip install -e git+git://github.com/scikit-learn/scikit-learn.git#egg=scikit-learn
@@ -74,9 +74,12 @@ pip install -e git+git://github.com/scikit-learn/scikit-learn.git#egg=scikit-lea
 # Theano
 pip install -e git+git://github.com/Theano/Theano.git#egg=Theano
 
-# Tutorial files 
-wget https://raw.githubusercontent.com/SnippyHolloW/DL4H/master/from_logistic_regression_to_deep_nets.ipynb
-wget https://raw.githubusercontent.com/SnippyHolloW/DL4H/master/dnn.py
+# Tutorial files
+if [! -d "DL4H"]; then
+    git clone git@github.com:SnippyHolloW/DL4H.git
+fi
+
+# Checkout this project to access installation script and additional resources
 if [ ! -d "dl-machine" ]; then
     git clone git@github.com:deeplearningparis/dl-machine.git
 fi
