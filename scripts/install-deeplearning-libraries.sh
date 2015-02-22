@@ -9,6 +9,9 @@ set -xe
 # good shape:
 nvidia-smi
 
+# Refresh apt indices
+sudo apt-get update
+
 # Build latest stable release of OpenBLAS without OPENMP to make it possible
 # to use Python multiprocessing and forks without crash
 # The torch install script will install OpenBLAS with OPENMP enabled in
