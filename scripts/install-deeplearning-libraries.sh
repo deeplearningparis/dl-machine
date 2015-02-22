@@ -66,9 +66,15 @@ pip install -e git+git://github.com/scikit-learn/scikit-learn.git#egg=scikit-lea
 # Theano
 pip install -e git+git://github.com/Theano/Theano.git#egg=Theano
 
+# Tutorial files 
+wget https://raw.githubusercontent.com/SnippyHolloW/DL4H/master/from_logistic_regression_to_deep_nets.ipynb
+wget https://raw.githubusercontent.com/SnippyHolloW/DL4H/master/dnn.py
+git clone https://github.com/deeplearningparis/dl-machine.git
+ln -s dl-machine/theanorc .theanorc
+
 # Torch
-curl -sk https://raw.githubusercontent.com/torch/ezinstall/master/install-deps | bash
-curl -sk https://raw.githubusercontent.com/torch/ezinstall/master/install-luajit+torch | PREFIX=~/torch bash
-echo "export PATH=~/torch/bin:\$PATH; export LD_LIBRARY_PATH=~/torch/lib:\$LD_LIBRARY_PATH; " >>~/.bashrc && source ~/.bashrc
-git clone https://github.com/facebook/iTorch.git
-(cd iTorch && luarocks make)
+#curl -sk https://raw.githubusercontent.com/torch/ezinstall/master/install-deps | bash
+#curl -sk https://raw.githubusercontent.com/torch/ezinstall/master/install-luajit+torch | PREFIX=~/torch bash
+#echo "export PATH=~/torch/bin:\$PATH; export LD_LIBRARY_PATH=~/torch/lib:\$LD_LIBRARY_PATH; " >>~/.bashrc && source ~/.bashrc
+#git clone https://github.com/facebook/iTorch.git
+#(cd iTorch && luarocks make)
