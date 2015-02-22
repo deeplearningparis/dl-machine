@@ -75,7 +75,7 @@ pip install -e git+git://github.com/scikit-learn/scikit-learn.git#egg=scikit-lea
 pip install -e git+git://github.com/Theano/Theano.git#egg=Theano
 
 # Tutorial files
-if [! -d "DL4H"]; then
+if [ ! -d "DL4H" ]; then
     git clone git@github.com:SnippyHolloW/DL4H.git
 else
     (cd DL4H && git pull --rebase)
