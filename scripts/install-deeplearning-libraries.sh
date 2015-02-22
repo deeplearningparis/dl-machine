@@ -77,11 +77,15 @@ pip install -e git+git://github.com/Theano/Theano.git#egg=Theano
 # Tutorial files
 if [! -d "DL4H"]; then
     git clone git@github.com:SnippyHolloW/DL4H.git
+else
+    (cd DL4H && git pull --rebase)
 fi
 
 # Checkout this project to access installation script and additional resources
 if [ ! -d "dl-machine" ]; then
     git clone git@github.com:deeplearningparis/dl-machine.git
+else
+    (cd dl-machine && git pull --rebase)
 fi
 if [ ! -f ".theanorc" ]; then
     ln -s dl-machine/theanorc ~/.theanorc
@@ -93,8 +97,14 @@ if [ ! -d "torch" ]; then
     curl -sk https://raw.githubusercontent.com/torch/ezinstall/master/install-luajit+torch | PREFIX=~/torch bash
     echo "export PATH=\$PATH:$HOME/torch/bin" >> ~/.bashrc
     echo "export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:$HOME/torch/lib" >> ~/.bashrc
-    export PATH=$PATH:$HOME/torch/bin
-    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/torch/lib
-    git clone https://github.com/facebook/iTorch.git
-    (cd iTorch && luarocks make)
 fi
+
+export PATH=$PATH:$HOME/torch/bin
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/torch/lib
+
+if [ ! -d "iTorch" ]; then
+    git clone https://github.com/facebook/iTorch.git
+else
+    (cd iTorch && git pull --rebase)
+fi
+(cd iTorch && luarocks make)
