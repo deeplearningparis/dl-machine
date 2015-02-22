@@ -77,8 +77,12 @@ pip install -e git+git://github.com/Theano/Theano.git#egg=Theano
 # Tutorial files 
 wget https://raw.githubusercontent.com/SnippyHolloW/DL4H/master/from_logistic_regression_to_deep_nets.ipynb
 wget https://raw.githubusercontent.com/SnippyHolloW/DL4H/master/dnn.py
-git clone https://github.com/deeplearningparis/dl-machine.git
-ln -s dl-machine/theanorc .theanorc
+if [ ! -d "dl-machine" ]; then
+    git clone https://github.com/deeplearningparis/dl-machine.git
+fi
+if [ ! -f ".theanorc" ]; then
+    ln -s dl-machine/theanorc ~/.theanorc
+fi
 
 # Torch
 if [ ! -d "torch" ]; then
