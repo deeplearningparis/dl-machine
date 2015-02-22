@@ -4,13 +4,11 @@
 # a recent version of CUDA. See "ubuntu-14.04-cuda-6.5.sh" to build setup
 # an AWS EC2 g2.2xlarge instance type for instance.
 set -xe
+cd $HOME
 
 # Check that the NVIDIA drivers are installed properly and the GPU is in a
 # good shape:
 nvidia-smi
-
-# Refresh apt indices
-sudo apt-get update
 
 # Build latest stable release of OpenBLAS without OPENMP to make it possible
 # to use Python multiprocessing and forks without crash
@@ -19,42 +17,52 @@ sudo apt-get update
 # distinct folder.
 # Note: the master branch only has the release tags in it
 sudo chown ubuntu:ubuntu /opt/
-git clone -q --branch=master git://github.com/xianyi/OpenBLAS.git
-export OPENBLAS_ROOT=/opt/OpenBLAS-no-openmp
-(cd OpenBLAS \
-  && make FC=gfortran USE_OPENMP=0 NO_AFFINITY=1 NUM_THREADS=32 \
-  && make install PREFIX=$OPENBLAS_ROOT)
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$OPENBLAS_ROOT/lib
-echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH" >> ~/.bashrc
+
+if [ ! -d "OpenBLAS" ]; then
+    git clone -q --branch=master git://github.com/xianyi/OpenBLAS.git
+    export OPENBLAS_ROOT=/opt/OpenBLAS-no-openmp
+    (cd OpenBLAS \
+      && make FC=gfortran USE_OPENMP=0 NO_AFFINITY=1 NUM_THREADS=32 \
+      && make install PREFIX=$OPENBLAS_ROOT)
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$OPENBLAS_ROOT/lib
+    echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH" >> ~/.bashrc
+fi
 sudo ldconfig
 
 # Python basics: update pip and setup a virtualenv to avoid mixing packages
 # installed from source with system packages
+sudo apt-get update
 sudo apt-get install -y python-dev python-pip htop
 sudo pip install -U pip virtualenv
-virtualenv venv
+if [ ! -d "venv" ]; then
+    virtualenv venv
+    echo "source ~/venv/bin/activate" >> ~/.bashrc
+fi
 source venv/bin/activate
-echo "source ~/venv/bin/activate" >> ~/.bashrc
 pip install Cython
 
 # Build numpy from source against OpenBLAS
-git clone -q --branch=v1.9.1 git://github.com/numpy/numpy.git
-echo "[openblas]" >> numpy/site.cfg
-echo "libraries = openblas" >> numpy/site.cfg
-echo "library_dirs = $OPENBLAS_ROOT/lib" >> numpy/site.cfg
-echo "include_dirs = $OPENBLAS_ROOT/include" >> numpy/site.cfg
-(cd numpy && python setup.py install)
+if [ ! -d "numpy" ]; then
+    git clone -q --branch=v1.9.1 git://github.com/numpy/numpy.git
+    echo "[openblas]" >> numpy/site.cfg
+    echo "libraries = openblas" >> numpy/site.cfg
+    echo "library_dirs = $OPENBLAS_ROOT/lib" >> numpy/site.cfg
+    echo "include_dirs = $OPENBLAS_ROOT/include" >> numpy/site.cfg
+    (cd numpy && python setup.py install)
+fi
 
 # Build scipy from source against OpenBLAS
-git clone -q --branch=v0.15.1  git://github.com/scipy/scipy.git
-echo "[DEFAULT]" >> scipy/site.cfg
-echo "library_dirs = $OPENBLAS_ROOT/lib:/usr/local/lib" >> scipy/site.cfg
-echo "include_dirs = $OPENBLAS_ROOT/include:/usr/local/include" >> scipy/site.cfg
-echo "[blas_opt]" >> scipy/site.cfg
-echo "libraries = openblas" >> scipy/site.cfg
-echo "[lapack_opt]" >> scipy/site.cfg
-echo "libraries = openblas" >> scipy/site.cfg
-(cd scipy && python setup.py install)
+if [ ! -d "scipy" ]; then
+    git clone -q --branch=v0.15.1  git://github.com/scipy/scipy.git
+    echo "[DEFAULT]" >> scipy/site.cfg
+    echo "library_dirs = $OPENBLAS_ROOT/lib:/usr/local/lib" >> scipy/site.cfg
+    echo "include_dirs = $OPENBLAS_ROOT/include:/usr/local/include" >> scipy/site.cfg
+    echo "[blas_opt]" >> scipy/site.cfg
+    echo "libraries = openblas" >> scipy/site.cfg
+    echo "[lapack_opt]" >> scipy/site.cfg
+    echo "libraries = openblas" >> scipy/site.cfg
+    (cd scipy && python setup.py install)
+fi
 
 # Install common tools from the scipy stack
 sudo apt-get install -y libfreetype6-dev libpng12-dev
