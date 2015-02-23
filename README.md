@@ -2,15 +2,15 @@
 
 Scripts to setup a GPU / CUDA enable compute server with libraries to study deep learning development
 
-## Setting up an Amazon G2 xlarge spot instance
+## Setting up an Amazon g2.2xlarge spot instance
 
 - log in to AWS management console and select EC2 instances
 - select US-WEST (N. California) region in top left menu
 - select community AMIs and search for `ubuntu-14.04-hvm-deeplearning-paris`
 - click on "Spot Request" on the leftmost menu
 - on the Choose instance Type tab, select GPU instances `g2.2xlarge`
-- bid a price larger than current price (e.g. 0.10$)
-- in configure security group click Add Rule, and add a Custom TCP Rule with port Range `8888-8889` and from Anywhere (TODO: add access restriction)
+- bid a price larger than current price (e.g. $0.10, if it fails check the spot pricing history for that instance type).
+- in configure security group click Add Rule, and add a Custom TCP Rule with port Range `8888-8889` and from `Anywhere` (TODO: add access restriction)
 - save the `mykey.pem` file and change its accessibility :
 ```
 chmod 400 mykeypem
@@ -48,23 +48,30 @@ vi ~/.ssh/config
 ```
 ## Start using your instance
 
-you can access your instance in two ways:
-- ssh to your instance, and start coding in Python or Torch
-- run an ipython/itorch server from your instance and use it locally
+By default an IPython notebook server and an iTorch notebook server should be running on port 8888 and 8889 respectively. You need to open those ports in the `Security Group` of your instance if you have not done so yet.
 
-## Run the ipython/itorch notebook server
+Simply open the following URLs in your favorite browser:
 
-- ssh to your instance
-- start a screen or tmux terminal:
+- http://INSTANCE_ID.compute.amazonaws.com:8888
+- http://INSTANCE_ID.compute.amazonaws.com:8889
+
+If this does not work you can login to your instance via as ssh:
+
+```
+ssh -A ubuntu@INSTANCE_ID.compute.amazonaws.com
+```
+
+(optional) Start a screen or tmux terminal:
+
 ```
 screen
 ```
-- launch the ipython and itorch notebook server
-```
-ipython notebook --ip='*' --browser=none
-itorch notebook --ip='*' --browser=none
-```
 
-- access your ipython/itorch by connecting to the address `http://dnsyourinstance:8888/`
+Use the `top` or `ps aux` command to check whether the ipython process is running. If this is not the case, launch the ipython and itorch notebook server:
+
+```
+ipython notebook --ip='*' --port=8888 --browser=none
+itorch notebook --ip='*' --port=8889 --browser=none
+```
 
 TODO : add security! Anyone can access the ipython/itorch console
