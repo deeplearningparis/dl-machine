@@ -41,26 +41,24 @@ fi
 source venv/bin/activate
 pip install -U Cython
 
+# Checkout this project to access installation script and additional resources
+if [ ! -d "dl-machine" ]; then
+    git clone git@github.com:deeplearningparis/dl-machine.git
+else
+    (cd dl-machine && git pull --rebase)
+fi
+
 # Build numpy from source against OpenBLAS
 if [ ! -d "numpy" ]; then
     git clone -q --branch=v1.9.1 git://github.com/numpy/numpy.git
-    echo "[openblas]" >> numpy/site.cfg
-    echo "libraries = openblas" >> numpy/site.cfg
-    echo "library_dirs = $OPENBLAS_ROOT/lib" >> numpy/site.cfg
-    echo "include_dirs = $OPENBLAS_ROOT/include" >> numpy/site.cfg
+    ln -s dl-machine/numpy-site.cfg numpy/site.cfg
     (cd numpy && python setup.py install)
 fi
 
 # Build scipy from source against OpenBLAS
 if [ ! -d "scipy" ]; then
     git clone -q --branch=v0.15.1  git://github.com/scipy/scipy.git
-    echo "[DEFAULT]" >> scipy/site.cfg
-    echo "library_dirs = $OPENBLAS_ROOT/lib:/usr/local/lib" >> scipy/site.cfg
-    echo "include_dirs = $OPENBLAS_ROOT/include:/usr/local/include" >> scipy/site.cfg
-    echo "[blas_opt]" >> scipy/site.cfg
-    echo "libraries = openblas" >> scipy/site.cfg
-    echo "[lapack_opt]" >> scipy/site.cfg
-    echo "libraries = openblas" >> scipy/site.cfg
+    ln -s dl-machine/scipy-site.cfg scipy/site.cfg
     (cd scipy && python setup.py install)
 fi
 
@@ -73,22 +71,15 @@ pip install -e git+git://github.com/scikit-learn/scikit-learn.git#egg=scikit-lea
 
 # Theano
 pip install -e git+git://github.com/Theano/Theano.git#egg=Theano
+if [ ! -f ".theanorc" ]; then
+    ln -s dl-machine/theanorc ~/.theanorc
+fi
 
 # Tutorial files
 if [ ! -d "DL4H" ]; then
     git clone git@github.com:SnippyHolloW/DL4H.git
 else
     (cd DL4H && git pull --rebase)
-fi
-
-# Checkout this project to access installation script and additional resources
-if [ ! -d "dl-machine" ]; then
-    git clone git@github.com:deeplearningparis/dl-machine.git
-else
-    (cd dl-machine && git pull --rebase)
-fi
-if [ ! -f ".theanorc" ]; then
-    ln -s dl-machine/theanorc ~/.theanorc
 fi
 
 # Torch
