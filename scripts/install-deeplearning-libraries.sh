@@ -39,7 +39,8 @@ if [ ! -d "venv" ]; then
     echo "source ~/venv/bin/activate" >> ~/.bashrc
 fi
 source venv/bin/activate
-pip install -U Cython
+pip install -U pip
+pip install -U circus circus-web Cython
 
 # Checkout this project to access installation script and additional resources
 if [ ! -d "dl-machine" ]; then
