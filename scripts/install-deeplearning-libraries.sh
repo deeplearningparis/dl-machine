@@ -124,3 +124,10 @@ if [ ! -f "/etc/init/circus.conf" ]; then
     sudo initctl reload-configuration
 fi
 sudo service circus restart
+
+
+# Register a task job to get the main repo of the image automatically up to date
+# at boot time
+if [ ! -f "/etc/init/update-instance.conf" ]; then
+    sudo ln -s /home/ubuntu/dl-machine/update-instance.conf /etc/init/update-instance.conf
+fi
