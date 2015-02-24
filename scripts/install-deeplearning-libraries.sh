@@ -46,7 +46,11 @@ pip install -U circus circus-web Cython
 if [ ! -d "dl-machine" ]; then
     git clone git@github.com:deeplearningparis/dl-machine.git
 else
-    (cd dl-machine && git pull --rebase)
+    if  [ "$1" == "reset" ]; then
+        (cd dl-machine && git reset --hard && git pull --rebase)
+    else
+        (cd dl-machine && git pull --rebase)
+    fi
 fi
 
 # Build numpy from source against OpenBLAS
@@ -80,7 +84,11 @@ fi
 if [ ! -d "DL4H" ]; then
     git clone git@github.com:SnippyHolloW/DL4H.git
 else
-    (cd DL4H && git pull --rebase)
+    if  [ "$1" == "reset" ]; then
+        (cd DL4H && git reset --hard && git pull --rebase)
+    else
+        (cd DL4H && git pull --rebase)
+    fi
 fi
 
 # Torch
@@ -97,7 +105,11 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/torch/lib
 if [ ! -d "iTorch" ]; then
     git clone https://github.com/facebook/iTorch.git
 else
-    (cd iTorch && git pull --rebase)
+    if  [ "$1" == "reset" ]; then
+        (cd iTorch && git reset --hard && git pull --rebase)
+    else
+        (cd iTorch && git pull --rebase)
+    fi
 fi
 (cd iTorch && luarocks make)
 
