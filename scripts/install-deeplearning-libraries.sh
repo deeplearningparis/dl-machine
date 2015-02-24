@@ -86,9 +86,9 @@ fi
 # Torch
 if [ ! -d "torch" ]; then
     curl -sk https://raw.githubusercontent.com/torch/ezinstall/master/install-deps | bash
-    curl -sk https://raw.githubusercontent.com/torch/ezinstall/master/install-luajit+torch | PREFIX=~/torch bash
-    echo "export PATH=\$PATH:$HOME/torch/bin" >> ~/.bashrc
-    echo "export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:$HOME/torch/lib" >> ~/.bashrc
+    git clone https://github.com/torch/distro.git ~/torch --recursive
+    cd ~/torch; 
+    yes | ./install.sh
 fi
 
 export PATH=$PATH:$HOME/torch/bin
