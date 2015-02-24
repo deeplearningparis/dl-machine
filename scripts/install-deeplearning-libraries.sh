@@ -6,6 +6,14 @@
 set -xe
 cd $HOME
 
+# Make it possible to pull from the HTTP remote when ssh environment is
+# not available such for instance at boot time
+if [ "$2" == 'http' ]; then
+    REMOTE="http"
+else
+    REMOTE="origin"
+fi
+
 # Check that the NVIDIA drivers are installed properly and the GPU is in a
 # good shape:
 nvidia-smi
@@ -45,11 +53,10 @@ pip install -U circus circus-web Cython
 # Checkout this project to access installation script and additional resources
 if [ ! -d "dl-machine" ]; then
     git clone git@github.com:deeplearningparis/dl-machine.git
+    git remote add http https://github.com/deeplearningparis/dl-machine.git
 else
     if  [ "$1" == "reset" ]; then
-        (cd dl-machine && git reset --hard && git pull --rebase)
-    else
-        (cd dl-machine && git pull --rebase)
+        (cd dl-machine && git reset --hard && git checkout master && git pull --rebase $REMOTE master)
     fi
 fi
 
@@ -83,11 +90,10 @@ fi
 # Tutorial files
 if [ ! -d "DL4H" ]; then
     git clone git@github.com:SnippyHolloW/DL4H.git
+    git remote add http https://github.com/SnippyHolloW/DL4H.git
 else
     if  [ "$1" == "reset" ]; then
-        (cd DL4H && git reset --hard && git pull --rebase)
-    else
-        (cd DL4H && git pull --rebase)
+        (cd DL4H && git reset --hard && git checkout master && git pull --rebase $REMOTE master)
     fi
 fi
 
@@ -103,12 +109,11 @@ export PATH=$PATH:$HOME/torch/bin
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/torch/lib
 
 if [ ! -d "iTorch" ]; then
-    git clone https://github.com/facebook/iTorch.git
+    git clone git@github.com:facebook/iTorch.git
+    git remote add http https://github.com/facebook/iTorch.git
 else
     if  [ "$1" == "reset" ]; then
-        (cd iTorch && git reset --hard && git pull --rebase)
-    else
-        (cd iTorch && git pull --rebase)
+        (cd iTorch && git reset --hard && git checkout master && git pull --rebase $REMOTE master)
     fi
 fi
 (cd iTorch && luarocks make)
