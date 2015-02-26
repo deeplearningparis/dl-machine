@@ -48,7 +48,7 @@ if [ ! -d "venv" ]; then
 fi
 source venv/bin/activate
 pip install -U pip
-pip install -U circus circus-web Cython Pillow
+pip install -U circus circus-web Cython Pillow scikit-image
 
 # Checkout this project to access installation script and additional resources
 if [ ! -d "dl-machine" ]; then
