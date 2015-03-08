@@ -1,31 +1,16 @@
 #!/bin/bash
 
-git clone https://github.com/BVLC/caffe.git
+sudo apt-get install protobuf-compiler libboost-all-dev libgflags-dev libgoogle-glog-dev libhdf5-serial-dev libleveldb-dev liblmdb-dev libsnappy-dev libopencv-dev libyaml-dev
 
-# git clone https://github.com/scikit-image/scikit-image.git
-# cd scikit-image
-# python setup.py install
+git clone https://github.com/BVLC/caffe.git ../caffe
 
-pip install pillow networkx
-pip install scikit-image
+cp Makefile.config.example ../caffe/Makefile.config
 
-sudo apt-get install protobuf-compiler
+cd ../caffe
+make all
+make pycaffe
 
-sudo apt-get install libboost-all-dev
-
-sudo apt-get install libgflags-dev
-
-sudo apt-get install libgoogle-glog-dev
-
-sudo apt-get install libhdf5-serial-dev
-
-sudo apt-get install libleveldb-dev
-
-sudo apt-get install liblmdb-dev
-
-sudo apt-get install libsnappy-dev
-
-sudo apt-get install libdc1394-22-dev
-
-cd caffe/python
+cd python
+pip install networkx -U
+pip install pillow -U
 pip install -r requirements.txt
