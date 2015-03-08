@@ -14,3 +14,5 @@ cd python
 pip install networkx -U
 pip install pillow -U
 pip install -r requirements.txt
+
+ln -s /home/ubuntu/caffe/python/caffe /home/ubuntu/venv/lib/python2.7/site-packages/caffe
