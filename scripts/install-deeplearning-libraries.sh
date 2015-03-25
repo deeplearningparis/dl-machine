@@ -24,7 +24,7 @@ nvidia-smi
 # /opt/OpenBLAS so we need to install the OpenBLAS used by Python in a
 # distinct folder.
 # Note: the master branch only has the release tags in it
-sudo chown ubuntu:ubuntu /opt/
+sudo chown `whoami` /opt/
 
 if [ ! -d "OpenBLAS" ]; then
     git clone -q --branch=master git://github.com/xianyi/OpenBLAS.git
@@ -61,6 +61,8 @@ else
 fi
 
 # Build numpy from source against OpenBLAS
+# You might need to install liblapack-dev package as well
+# sudo apt-get install -y liblapack-dev
 if [ ! -d "numpy" ]; then
     git clone -q --branch=v1.9.1 git://github.com/numpy/numpy.git
     ln -s dl-machine/numpy-site.cfg numpy/site.cfg
@@ -120,7 +122,7 @@ fi
 
 # Register the circus daemon with Upstart
 if [ ! -f "/etc/init/circus.conf" ]; then
-    sudo ln -s /home/ubuntu/dl-machine/circus.conf /etc/init/circus.conf
+    sudo ln -s $HOME/dl-machine/circus.conf /etc/init/circus.conf
     sudo initctl reload-configuration
 fi
 sudo service circus restart
@@ -129,5 +131,5 @@ sudo service circus restart
 # Register a task job to get the main repo of the image automatically up to date
 # at boot time
 if [ ! -f "/etc/init/update-instance.conf" ]; then
-    sudo ln -s /home/ubuntu/dl-machine/update-instance.conf /etc/init/update-instance.conf
+    sudo ln -s $HOME/dl-machine/update-instance.conf /etc/init/update-instance.conf
 fi
