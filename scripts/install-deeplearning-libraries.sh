@@ -62,6 +62,7 @@ fi
 # Build numpy from source against OpenBLAS
 # You might need to install liblapack-dev package as well
 # sudo apt-get install -y liblapack-dev
+sudo apt-get install -y gfortran
 if [ ! -d "numpy" ]; then
     git clone -q --branch=v1.9.1 git://github.com/numpy/numpy.git
     ln -s dl-machine/numpy-site.cfg numpy/site.cfg
