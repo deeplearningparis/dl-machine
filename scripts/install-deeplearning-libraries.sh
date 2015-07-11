@@ -24,14 +24,13 @@ nvidia-smi
 # /opt/OpenBLAS so we need to install the OpenBLAS used by Python in a
 # distinct folder.
 # Note: the master branch only has the release tags in it
-sudo chown `whoami` /opt/
 
 if [ ! -d "OpenBLAS" ]; then
     git clone -q --branch=master git://github.com/xianyi/OpenBLAS.git
     export OPENBLAS_ROOT=/opt/OpenBLAS-no-openmp
     (cd OpenBLAS \
       && make FC=gfortran USE_OPENMP=0 NO_AFFINITY=1 NUM_THREADS=32 \
-      && make install PREFIX=$OPENBLAS_ROOT)
+      && sudo make install PREFIX=$OPENBLAS_ROOT)
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$OPENBLAS_ROOT/lib
     echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH" >> ~/.bashrc
 fi
