@@ -63,13 +63,13 @@ fi
 # You might need to install liblapack-dev package as well
 # sudo apt-get install -y liblapack-dev
 sudo apt-get install -y gfortran
-if [ ! -d "~/.numpy-site.cfg" ]; then
+if [ ! -e "~/.numpy-site.cfg" ]; then
     ln -s dl-machine/numpy-site.cfg ~/.numpy-site.cfg
 fi
 pip install -U numpy
 
 # Build scipy from source against OpenBLAS
-if [ ! -d "~/.scipy-site.cfg" ]; then
+if [ ! -e "~/.scipy-site.cfg" ]; then
     ln -s dl-machine/scipy-site.cfg ~/.scipy-site.cfg
 fi
 pip install -U scipy
