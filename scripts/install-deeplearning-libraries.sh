@@ -47,7 +47,7 @@ if [ ! -d "venv" ]; then
 fi
 source venv/bin/activate
 pip install -U pip
-pip install -U circus circus-web Cython Pillow scikit-image
+pip install -U circus circus-web Cython Pillow
 
 # Checkout this project to access installation script and additional resources
 if [ ! -d "dl-machine" ]; then
@@ -75,7 +75,7 @@ pip install -U scipy
 
 # Install common tools from the scipy stack
 sudo apt-get install -y libfreetype6-dev libpng12-dev
-pip install -U matplotlib ipython[all] pandas
+pip install -U matplotlib ipython[all] pandas scikit-image
 
 # Scikit-learn (generic machine learning utilities)
 pip install -e git+git://github.com/scikit-learn/scikit-learn.git#egg=scikit-learn
