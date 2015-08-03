@@ -25,13 +25,13 @@ nvidia-smi
 # distinct folder.
 # Note: the master branch only has the release tags in it
 sudo apt-get install -y gfortran
+export OPENBLAS_ROOT=/opt/OpenBLAS-no-openmp
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$OPENBLAS_ROOT/lib
 if [ ! -d "OpenBLAS" ]; then
     git clone -q --branch=master git://github.com/xianyi/OpenBLAS.git
-    export OPENBLAS_ROOT=/opt/OpenBLAS-no-openmp
     (cd OpenBLAS \
       && make FC=gfortran USE_OPENMP=0 NO_AFFINITY=1 NUM_THREADS=32 \
       && sudo make install PREFIX=$OPENBLAS_ROOT)
-    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$OPENBLAS_ROOT/lib
     echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH" >> ~/.bashrc
 fi
 sudo ldconfig
@@ -52,7 +52,7 @@ pip install -U circus circus-web Cython Pillow
 # Checkout this project to access installation script and additional resources
 if [ ! -d "dl-machine" ]; then
     git clone git@github.com:deeplearningparis/dl-machine.git
-    git remote add http https://github.com/deeplearningparis/dl-machine.git
+    (cd dl-machine && git remote add http https://github.com/deeplearningparis/dl-machine.git)
 else
     if  [ "$1" == "reset" ]; then
         (cd dl-machine && git reset --hard && git checkout master && git pull --rebase $REMOTE master)
@@ -62,15 +62,13 @@ fi
 # Build numpy from source against OpenBLAS
 # You might need to install liblapack-dev package as well
 # sudo apt-get install -y liblapack-dev
-if [ ! -e "~/.numpy-site.cfg" ]; then
-    ln -s dl-machine/numpy-site.cfg ~/.numpy-site.cfg
-fi
+rm -f ~/.numpy-site.cfg
+ln -s dl-machine/numpy-site.cfg ~/.numpy-site.cfg
 pip install -U numpy
 
 # Build scipy from source against OpenBLAS
-if [ ! -e "~/.scipy-site.cfg" ]; then
-    ln -s dl-machine/scipy-site.cfg ~/.scipy-site.cfg
-fi
+rm -f ~/.scipy-site.cfg
+ln -s dl-machine/scipy-site.cfg ~/.scipy-site.cfg
 pip install -U scipy
 
 # Install common tools from the scipy stack
@@ -89,7 +87,7 @@ fi
 # Tutorial files
 if [ ! -d "DL4H" ]; then
     git clone git@github.com:SnippyHolloW/DL4H.git
-    git remote add http https://github.com/SnippyHolloW/DL4H.git
+    (cd DL4H && git remote add http https://github.com/SnippyHolloW/DL4H.git)
 else
     if  [ "$1" == "reset" ]; then
         (cd DL4H && git reset --hard && git checkout master && git pull --rebase $REMOTE master)
@@ -109,7 +107,7 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/torch/lib
 
 if [ ! -d "iTorch" ]; then
     git clone git@github.com:facebook/iTorch.git
-    git remote add http https://github.com/facebook/iTorch.git
+    (cd iTorch && git remote add http https://github.com/facebook/iTorch.git)
 else
     if  [ "$1" == "reset" ]; then
         (cd iTorch && git reset --hard && git checkout master && git pull --rebase $REMOTE master)
