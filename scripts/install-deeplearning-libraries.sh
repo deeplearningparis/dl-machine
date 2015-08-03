@@ -24,7 +24,7 @@ nvidia-smi
 # /opt/OpenBLAS so we need to install the OpenBLAS used by Python in a
 # distinct folder.
 # Note: the master branch only has the release tags in it
-
+sudo apt-get install -y gfortran
 if [ ! -d "OpenBLAS" ]; then
     git clone -q --branch=master git://github.com/xianyi/OpenBLAS.git
     export OPENBLAS_ROOT=/opt/OpenBLAS-no-openmp
@@ -62,7 +62,6 @@ fi
 # Build numpy from source against OpenBLAS
 # You might need to install liblapack-dev package as well
 # sudo apt-get install -y liblapack-dev
-sudo apt-get install -y gfortran
 if [ ! -e "~/.numpy-site.cfg" ]; then
     ln -s dl-machine/numpy-site.cfg ~/.numpy-site.cfg
 fi
