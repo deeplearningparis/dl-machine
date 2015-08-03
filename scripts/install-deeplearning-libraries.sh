@@ -63,18 +63,16 @@ fi
 # You might need to install liblapack-dev package as well
 # sudo apt-get install -y liblapack-dev
 sudo apt-get install -y gfortran
-if [ ! -d "numpy" ]; then
-    git clone -q --branch=v1.9.1 git://github.com/numpy/numpy.git
-    ln -s dl-machine/numpy-site.cfg numpy/site.cfg
-    (cd numpy && python setup.py install)
+if [ ! -e "~/.numpy-site.cfg" ]; then
+    ln -s dl-machine/numpy-site.cfg ~/.numpy-site.cfg
 fi
+pip install -U numpy
 
 # Build scipy from source against OpenBLAS
-if [ ! -d "scipy" ]; then
-    git clone -q --branch=v0.15.1  git://github.com/scipy/scipy.git
-    ln -s dl-machine/scipy-site.cfg scipy/site.cfg
-    (cd scipy && python setup.py install)
+if [ ! -e "~/.scipy-site.cfg" ]; then
+    ln -s dl-machine/scipy-site.cfg ~/.scipy-site.cfg
 fi
+pip install -U scipy
 
 # Install common tools from the scipy stack
 sudo apt-get install -y libfreetype6-dev libpng12-dev
