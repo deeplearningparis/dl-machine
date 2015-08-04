@@ -9,7 +9,7 @@ Scripts to setup a GPU / CUDA enable compute server with libraries to study deep
 - click on "Spot Request" on the leftmost menu and click "Request Spot Instances"
 - select community AMIs and search for `ubuntu-14.04-hvm-deeplearning-paris`
 - on the Choose instance Type tab, select GPU instances `g2.2xlarge`
-- bid a price larger than current price (e.g. $0.10, if it fails check the spot pricing history for that instance type)
+- bid a price larger than current price (e.g. $0.30, if it fails check the spot pricing history for that instance type)
 - in configure security group click Add Rule, and add a Custom TCP Rule with port Range `8888-8889` and from `Anywhere` 
 - Review and launch, save the `mykey.pem` file
  
