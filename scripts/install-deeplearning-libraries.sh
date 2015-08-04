@@ -99,11 +99,8 @@ if [ ! -d "torch" ]; then
     curl -sk https://raw.githubusercontent.com/torch/ezinstall/master/install-deps | bash
     git clone https://github.com/torch/distro.git ~/torch --recursive
     (cd ~/torch && yes | ./install.sh)
-    source .bashrc
 fi
-
-export PATH=$PATH:$HOME/torch/bin
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/torch/lib
+. ~/torch/install/bin/torch-activate
 
 if [ ! -d "iTorch" ]; then
     git clone git@github.com:facebook/iTorch.git
