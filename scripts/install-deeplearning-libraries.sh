@@ -118,7 +118,8 @@ fi
 sudo apt-get install -y protobuf-compiler libboost-all-dev libgflags-dev libgoogle-glog-dev libhdf5-serial-dev libleveldb-dev liblmdb-dev libsnappy-dev libopencv-dev libyaml-dev libprotobuf-dev
 
 if [ ! -d "caffe" ]; then
-    git clone https://github.com/BVLC/caffe.git
+    git clone git@github.com:BVLC/caffe.git
+    (cd caffe && git remote add http https://github.com/BVLC/caffe.git)
     (cd caffe && cp $HOME/dl-machine/caffe-Makefile.conf Makefile.conf && cmake -DBLAS=open . && make all)
     (cd caffe/python && pip install -R requirements.txt)
 else
