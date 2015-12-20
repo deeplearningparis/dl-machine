@@ -110,7 +110,7 @@ sudo apt-get install -y protobuf-compiler libboost-all-dev libgflags-dev libgoog
 if [ ! -d "caffe" ]; then
     git clone https://github.com/BVLC/caffe.git
     (cd caffe && cp $HOME/dl-machine/caffe-Makefile.conf Makefile.conf && cmake -DBLAS=open . && make all)
-    (cd caffe/python && pip install -R requirements.txt)
+    (cd caffe/python && pip install -r requirements.txt)
 else
     if [ "$1" == "reset" ]; then
 	(cd caffe && git reset --hard && git checkout master && git pull --rebase origin master && cp $HOME/dl-machine/caffe-Makefile.conf Makefile.conf && cmake -DBLAS=open . && make all)
