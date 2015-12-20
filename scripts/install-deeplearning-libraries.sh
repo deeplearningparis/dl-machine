@@ -6,13 +6,6 @@
 set -xe
 cd $HOME
 
-# Make it possible to pull from the HTTP remote when ssh environment is
-# not available such for instance at boot time
-if [ "$2" == 'http' ]; then
-    REMOTE="http"
-else
-    REMOTE="origin"
-fi
 
 # Check that the NVIDIA drivers are installed properly and the GPU is in a
 # good shape:
@@ -51,11 +44,10 @@ pip install -U circus circus-web Cython Pillow
 
 # Checkout this project to access installation script and additional resources
 if [ ! -d "dl-machine" ]; then
-    git clone git@github.com:deeplearningparis/dl-machine.git
-    (cd dl-machine && git remote add http https://github.com/deeplearningparis/dl-machine.git)
+    git clone https://github.com:deeplearningparis/dl-machine.git
 else
     if  [ "$1" == "reset" ]; then
-        (cd dl-machine && git reset --hard && git checkout master && git pull --rebase $REMOTE master)
+        (cd dl-machine && git reset --hard && git checkout master && git pull --rebase origin master)
     fi
 fi
 
@@ -86,11 +78,10 @@ fi
 
 # Tutorial files
 if [ ! -d "DL4H" ]; then
-    git clone git@github.com:SnippyHolloW/DL4H.git
-    (cd DL4H && git remote add http https://github.com/SnippyHolloW/DL4H.git)
+    git clone https://github.com/SnippyHolloW/DL4H.git
 else
     if  [ "$1" == "reset" ]; then
-        (cd DL4H && git reset --hard && git checkout master && git pull --rebase $REMOTE master)
+        (cd DL4H && git reset --hard && git checkout master && git pull --rebase origin master)
     fi
 fi
 
@@ -103,11 +94,10 @@ fi
 . ~/torch/install/bin/torch-activate
 
 if [ ! -d "iTorch" ]; then
-    git clone git@github.com:facebook/iTorch.git
-    (cd iTorch && git remote add http https://github.com/facebook/iTorch.git)
+    git clone https://github.com/facebook/iTorch.git
 else
     if  [ "$1" == "reset" ]; then
-        (cd iTorch && git reset --hard && git checkout master && git pull --rebase $REMOTE master)
+        (cd iTorch && git reset --hard && git checkout master && git pull --rebase origin master)
     fi
 fi
 (cd iTorch && luarocks make)
@@ -118,13 +108,12 @@ fi
 sudo apt-get install -y protobuf-compiler libboost-all-dev libgflags-dev libgoogle-glog-dev libhdf5-serial-dev libleveldb-dev liblmdb-dev libsnappy-dev libopencv-dev libyaml-dev libprotobuf-dev
 
 if [ ! -d "caffe" ]; then
-    git clone git@github.com:BVLC/caffe.git
-    (cd caffe && git remote add http https://github.com/BVLC/caffe.git)
+    git clone https://github.com/BVLC/caffe.git
     (cd caffe && cp $HOME/dl-machine/caffe-Makefile.conf Makefile.conf && cmake -DBLAS=open . && make all)
     (cd caffe/python && pip install -R requirements.txt)
 else
     if [ "$1" == "reset" ]; then
-	(cd caffe && git reset --hard && git checkout master && git pull --rebase $REMOTE master && cp $HOME/dl-machine/caffe-Makefile.conf Makefile.conf && cmake -DBLAS=open . && make all)
+	(cd caffe && git reset --hard && git checkout master && git pull --rebase origin master && cp $HOME/dl-machine/caffe-Makefile.conf Makefile.conf && cmake -DBLAS=open . && make all)
     fi
 fi
 
