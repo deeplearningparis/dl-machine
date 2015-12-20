@@ -112,6 +112,22 @@ else
 fi
 (cd iTorch && luarocks make)
 
+
+# Install caffe
+
+sudo apt-get install -y protobuf-compiler libboost-all-dev libgflags-dev libgoogle-glog-dev libhdf5-serial-dev libleveldb-dev liblmdb-dev libsnappy-dev libopencv-dev libyaml-dev libprotobuf-dev
+
+if [ ! -d "caffe" ]; then
+    git clone https://github.com/BVLC/caffe.git
+    (cd caffe && cp $HOME/dl-machine/caffe-Makefile.conf Makefile.conf && cmake -DBLAS=open . && make all)
+    (cd caffe/python && pip install -R requirements.txt)
+else
+    if [ "$1" == "reset" ]; then
+	(cd caffe && git reset --hard && git checkout master && git pull --rebase $REMOTE master && cp $HOME/dl-machine/caffe-Makefile.conf Makefile.conf && cmake -DBLAS=open . && make all)
+    fi
+fi
+
+
 # Register the circus daemon with Upstart
 if [ ! -f "/etc/init/circus.conf" ]; then
     sudo ln -s $HOME/dl-machine/circus.conf /etc/init/circus.conf
