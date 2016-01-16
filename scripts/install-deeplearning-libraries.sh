@@ -85,6 +85,19 @@ else
     fi
 fi
 
+# Keras (will be using theano by default)
+if [ ! -d "keras" ]; then
+    git clone https://github.com/fchollet/keras.git
+    (cd keras && python setup.py install)
+else
+    if  [ "$1" == "reset" ]; then
+	(cd keras && git reset --hard && git checkout master && git pull --rebase $REMOTE master && python setup.py install)
+    fi
+fi
+
+# Tensorflow (cpu mode only, GPU not officially supported on AWS - CUDA 3.0 architecture)
+pip install --upgrade https://storage.googleapis.com/tensorflow/linux/cpu/tensorflow-0.5.0-cp27-none-linux_x86_64.whl
+
 # Torch
 if [ ! -d "torch" ]; then
     curl -sk https://raw.githubusercontent.com/torch/ezinstall/master/install-deps | bash
