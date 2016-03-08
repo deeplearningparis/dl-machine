@@ -40,11 +40,14 @@ if [ ! -d "venv" ]; then
 fi
 source venv/bin/activate
 pip install -U pip
+# Was getting: "ValueError: jpeg is required unless explicitly disabled using --disable-jpeg, aborting"
+# Per http://stackoverflow.com/a/34631976/1041319 libjpeg8-dev is missing.
+sudo apt-get install libjpeg-dev zlib1g-dev
 pip install -U circus circus-web Cython Pillow
 
 # Checkout this project to access installation script and additional resources
 if [ ! -d "dl-machine" ]; then
-    git clone https://github.com:deeplearningparis/dl-machine.git
+    git clone https://github.com/deeplearningparis/dl-machine.git
 else
     if  [ "$1" == "reset" ]; then
         (cd dl-machine && git reset --hard && git checkout master && git pull --rebase origin master)
@@ -100,9 +103,12 @@ pip install --upgrade https://storage.googleapis.com/tensorflow/linux/cpu/tensor
 
 # Torch
 if [ ! -d "torch" ]; then
+    sudo apt-get install -y curl
     curl -sk https://raw.githubusercontent.com/torch/ezinstall/master/install-deps | bash
     git clone https://github.com/torch/distro.git ~/torch --recursive
-    (cd ~/torch && yes | ./install.sh)
+    sudo apt-get install -y cmake           # Needed.
+    sudo apt-get install -y libreadline-dev # Needed, gives "readline.c:7:31: fatal error: readline/readline.h: No such file or directory" otherwise.
+    (cd ~/torch && yes | ./install.sh)      # Took fairly long on a vm though.
 fi
 . ~/torch/install/bin/torch-activate
 
@@ -113,6 +119,7 @@ else
         (cd iTorch && git reset --hard && git checkout master && git pull --rebase origin master)
     fi
 fi
+sudo apt-get install -y libzmq3-dev libssl-dev python-zmq # Needed, otherwise, "Missing dependencies for itorch: luacrypto, uuid, lzmq >= 0.4.2"
 (cd iTorch && luarocks make)
 
 
@@ -126,7 +133,7 @@ if [ ! -d "caffe" ]; then
     (cd caffe/python && pip install -r requirements.txt)
 else
     if [ "$1" == "reset" ]; then
-	(cd caffe && git reset --hard && git checkout master && git pull --rebase origin master && cp $HOME/dl-machine/caffe-Makefile.conf Makefile.conf && cmake -DBLAS=open . && make all)
+        (cd caffe && git reset --hard && git checkout master && git pull --rebase origin master && cp $HOME/dl-machine/caffe-Makefile.conf Makefile.conf && cmake -DBLAS=open . && make all)
     fi
 fi
 
@@ -136,6 +143,7 @@ if [ ! -f "/etc/init/circus.conf" ]; then
     sudo ln -s $HOME/dl-machine/circus.conf /etc/init/circus.conf
     sudo initctl reload-configuration
 fi
+# TODO: resolve issue: "start: Job failed to start"
 sudo service circus restart
 
 
