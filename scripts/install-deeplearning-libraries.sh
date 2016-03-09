@@ -27,6 +27,11 @@ if [ ! -d "OpenBLAS" ]; then
       && sudo make install PREFIX=$OPENBLAS_ROOT)
     echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH" >> ~/.bashrc
 fi
+# https://hunseblog.wordpress.com/2014/09/15/installing-numpy-and-openblas/
+# Suggested adding this, keeping commented for now, not yet sure is needed
+# given the already done export LD_LIBRARY_PATH
+#grep -q opt/OpenBLAS /etc/ld.so.conf.d/openblas.conf ||
+#    sudo su - -c"echo $OPENBLAS_ROOT/lib >> /etc/ld.so.conf.d/openblas.conf"
 sudo ldconfig
 
 # Python basics: update pip and setup a virtualenv to avoid mixing packages
@@ -94,7 +99,7 @@ if [ ! -d "keras" ]; then
     (cd keras && python setup.py install)
 else
     if  [ "$1" == "reset" ]; then
-	(cd keras && git reset --hard && git checkout master && git pull --rebase $REMOTE master && python setup.py install)
+        (cd keras && git reset --hard && git checkout master && git pull --rebase $REMOTE master && python setup.py install)
     fi
 fi
 
@@ -129,7 +134,10 @@ sudo apt-get install -y protobuf-compiler libboost-all-dev libgflags-dev libgoog
 
 if [ ! -d "caffe" ]; then
     git clone https://github.com/BVLC/caffe.git
-    (cd caffe && cp $HOME/dl-machine/caffe-Makefile.conf Makefile.conf && cmake -DBLAS=open . && make all)
+    # For CPU only can use: cat $HOME/dl-machine/caffe-Makefile.conf | sed -e 's/# CPU_ONLY/CPU_ONLY/' > Makefile.conf && \
+    (cd caffe && \
+      cp $HOME/dl-machine/caffe-Makefile.conf Makefile.conf && \
+      cmake -DBLAS=open . && make all)
     (cd caffe/python && pip install -r requirements.txt)
 else
     if [ "$1" == "reset" ]; then
@@ -137,10 +145,19 @@ else
     fi
 fi
 
+# Install Caffe from nvidia packages
+# https://github.com/NVIDIA/DIGITS/blob/master/docs/UbuntuInstall.md#repository-access
+CUDA_REPO_PKG=cuda-repo-ubuntu1404_7.5-18_amd64.deb &&
+    wget http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1404/x86_64/$CUDA_REPO_PKG &&
+    sudo dpkg -i $CUDA_REPO_PKG
+ML_REPO_PKG=nvidia-machine-learning-repo_4.0-2_amd64.deb &&
+    wget http://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1404/x86_64/$ML_REPO_PKG &&
+    sudo dpkg -i $ML_REPO_PKG
+sudo apt-get install -y caffe-nv python-caffe-nv
 
 # Register the circus daemon with Upstart
 if [ ! -f "/etc/init/circus.conf" ]; then
-    sudo ln -s $HOME/dl-machine/circus.conf /etc/init/circus.conf
+    sed -e"s/ubuntu/$USER/g" ~/dl-machine/circus.conf | sudo bash -c 'cat - > /etc/init/circus.conf'
     sudo initctl reload-configuration
 fi
 # TODO: resolve issue: "start: Job failed to start"
@@ -150,5 +167,5 @@ sudo service circus restart
 # Register a task job to get the main repo of the image automatically up to date
 # at boot time
 if [ ! -f "/etc/init/update-instance.conf" ]; then
-    sudo ln -s $HOME/dl-machine/update-instance.conf /etc/init/update-instance.conf
+    sed -e"s/ubuntu/$USER/g" ~/dl-machine/update-instance.conf | sudo bash -c 'cat - > /etc/init/update-instance.conf'
 fi
