@@ -145,15 +145,17 @@ else
     fi
 fi
 
-# Install Caffe from nvidia packages
+# Install Caffe from nvidia packages as a backup if the above build does not work
 # https://github.com/NVIDIA/DIGITS/blob/master/docs/UbuntuInstall.md#repository-access
-CUDA_REPO_PKG=cuda-repo-ubuntu1404_7.5-18_amd64.deb &&
-    wget http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1404/x86_64/$CUDA_REPO_PKG &&
-    sudo dpkg -i $CUDA_REPO_PKG
-ML_REPO_PKG=nvidia-machine-learning-repo_4.0-2_amd64.deb &&
-    wget http://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1404/x86_64/$ML_REPO_PKG &&
-    sudo dpkg -i $ML_REPO_PKG
-sudo apt-get install -y caffe-nv python-caffe-nv
+install_caffe_nvidia_packaging() {
+  CUDA_REPO_PKG=cuda-repo-ubuntu1404_7.5-18_amd64.deb &&
+      wget http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1404/x86_64/$CUDA_REPO_PKG &&
+      sudo dpkg -i $CUDA_REPO_PKG
+  ML_REPO_PKG=nvidia-machine-learning-repo_4.0-2_amd64.deb &&
+      wget http://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1404/x86_64/$ML_REPO_PKG &&
+      sudo dpkg -i $ML_REPO_PKG
+  sudo apt-get install -y caffe-nv python-caffe-nv
+}
 
 # Register the circus daemon with Upstart
 if [ ! -f "/etc/init/circus.conf" ]; then
