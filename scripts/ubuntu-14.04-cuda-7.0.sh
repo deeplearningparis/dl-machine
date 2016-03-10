@@ -3,6 +3,8 @@
 
 export DEBIAN_FRONTEND=noninteractive
 sudo apt-get update -y
+# Asks for approvals, likely needs:
+# APTCMD='"apt-get -f -y --force-yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold"'
 sudo apt-get -y dist-upgrade
 sudo apt-get install -y git wget linux-image-generic build-essential
 

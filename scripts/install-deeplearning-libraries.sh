@@ -27,6 +27,11 @@ if [ ! -d "OpenBLAS" ]; then
       && sudo make install PREFIX=$OPENBLAS_ROOT)
     echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH" >> ~/.bashrc
 fi
+# https://hunseblog.wordpress.com/2014/09/15/installing-numpy-and-openblas/
+# Suggested adding this, keeping commented for now, not yet sure is needed
+# given the already done export LD_LIBRARY_PATH
+#grep -q opt/OpenBLAS /etc/ld.so.conf.d/openblas.conf ||
+#    sudo su - -c"echo $OPENBLAS_ROOT/lib >> /etc/ld.so.conf.d/openblas.conf"
 sudo ldconfig
 
 # Python basics: update pip and setup a virtualenv to avoid mixing packages
@@ -40,11 +45,14 @@ if [ ! -d "venv" ]; then
 fi
 source venv/bin/activate
 pip install -U pip
+# Was getting: "ValueError: jpeg is required unless explicitly disabled using --disable-jpeg, aborting"
+# Per http://stackoverflow.com/a/34631976/1041319 libjpeg8-dev is missing.
+sudo apt-get install libjpeg-dev zlib1g-dev
 pip install -U circus circus-web Cython Pillow
 
 # Checkout this project to access installation script and additional resources
 if [ ! -d "dl-machine" ]; then
-    git clone https://github.com:deeplearningparis/dl-machine.git
+    git clone https://github.com/deeplearningparis/dl-machine.git
 else
     if  [ "$1" == "reset" ]; then
         (cd dl-machine && git reset --hard && git checkout master && git pull --rebase origin master)
@@ -91,7 +99,7 @@ if [ ! -d "keras" ]; then
     (cd keras && python setup.py install)
 else
     if  [ "$1" == "reset" ]; then
-	(cd keras && git reset --hard && git checkout master && git pull --rebase $REMOTE master && python setup.py install)
+        (cd keras && git reset --hard && git checkout master && git pull --rebase $REMOTE master && python setup.py install)
     fi
 fi
 
@@ -100,9 +108,12 @@ pip install --upgrade https://storage.googleapis.com/tensorflow/linux/cpu/tensor
 
 # Torch
 if [ ! -d "torch" ]; then
+    sudo apt-get install -y curl
     curl -sk https://raw.githubusercontent.com/torch/ezinstall/master/install-deps | bash
     git clone https://github.com/torch/distro.git ~/torch --recursive
-    (cd ~/torch && yes | ./install.sh)
+    sudo apt-get install -y cmake           # Needed.
+    sudo apt-get install -y libreadline-dev # Needed, gives "readline.c:7:31: fatal error: readline/readline.h: No such file or directory" otherwise.
+    (cd ~/torch && yes | ./install.sh)      # Took fairly long on a vm though.
 fi
 . ~/torch/install/bin/torch-activate
 
@@ -113,6 +124,7 @@ else
         (cd iTorch && git reset --hard && git checkout master && git pull --rebase origin master)
     fi
 fi
+sudo apt-get install -y libzmq3-dev libssl-dev python-zmq # Needed, otherwise, "Missing dependencies for itorch: luacrypto, uuid, lzmq >= 0.4.2"
 (cd iTorch && luarocks make)
 
 
@@ -122,25 +134,40 @@ sudo apt-get install -y protobuf-compiler libboost-all-dev libgflags-dev libgoog
 
 if [ ! -d "caffe" ]; then
     git clone https://github.com/BVLC/caffe.git
-    (cd caffe && cp $HOME/dl-machine/caffe-Makefile.conf Makefile.conf && cmake -DBLAS=open . && make all)
+    # For CPU only can use: cat $HOME/dl-machine/caffe-Makefile.conf | sed -e 's/# CPU_ONLY/CPU_ONLY/' > Makefile.conf && \
+    (cd caffe && \
+      cp $HOME/dl-machine/caffe-Makefile.conf Makefile.conf && \
+      cmake -DBLAS=open . && make all)
     (cd caffe/python && pip install -r requirements.txt)
 else
     if [ "$1" == "reset" ]; then
-	(cd caffe && git reset --hard && git checkout master && git pull --rebase origin master && cp $HOME/dl-machine/caffe-Makefile.conf Makefile.conf && cmake -DBLAS=open . && make all)
+        (cd caffe && git reset --hard && git checkout master && git pull --rebase origin master && cp $HOME/dl-machine/caffe-Makefile.conf Makefile.conf && cmake -DBLAS=open . && make all)
     fi
 fi
 
+# Install Caffe from nvidia packages as a backup if the above build does not work
+# https://github.com/NVIDIA/DIGITS/blob/master/docs/UbuntuInstall.md#repository-access
+install_caffe_nvidia_packaging() {
+  CUDA_REPO_PKG=cuda-repo-ubuntu1404_7.5-18_amd64.deb &&
+      wget http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1404/x86_64/$CUDA_REPO_PKG &&
+      sudo dpkg -i $CUDA_REPO_PKG
+  ML_REPO_PKG=nvidia-machine-learning-repo_4.0-2_amd64.deb &&
+      wget http://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1404/x86_64/$ML_REPO_PKG &&
+      sudo dpkg -i $ML_REPO_PKG
+  sudo apt-get install -y caffe-nv python-caffe-nv
+}
 
 # Register the circus daemon with Upstart
 if [ ! -f "/etc/init/circus.conf" ]; then
-    sudo ln -s $HOME/dl-machine/circus.conf /etc/init/circus.conf
+    sed -e"s/ubuntu/$USER/g" ~/dl-machine/circus.conf | sudo bash -c 'cat - > /etc/init/circus.conf'
     sudo initctl reload-configuration
 fi
+# TODO: resolve issue: "start: Job failed to start"
 sudo service circus restart
 
 
 # Register a task job to get the main repo of the image automatically up to date
 # at boot time
 if [ ! -f "/etc/init/update-instance.conf" ]; then
-    sudo ln -s $HOME/dl-machine/update-instance.conf /etc/init/update-instance.conf
+    sed -e"s/ubuntu/$USER/g" ~/dl-machine/update-instance.conf | sudo bash -c 'cat - > /etc/init/update-instance.conf'
 fi
